@@ -1,0 +1,510 @@
+#+Title: Quantile Regression in the Presence of Monotone Missingness with Sensitivity Analysis
+#+Author: Minzhao Liu, Mike Daniels
+#+Date: 2014-03-19
+
+#+OPTIONS: toc:1 reveal_mathjax:t num:nil
+#+OPTIONS: reveal_center:0 REVEAL_TITLE_SLIDE_TEMPLATE:nil
+#+REVEAL_MARGIN: 0.1
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 2.5
+#+REVEAL_HLEVEL: 2
+#+REVEAL_TRANS: cube
+#+REVEAL_THEME: moon
+#+REVEAL_ROOT: file:///Users/liuminzhao/dev/reveal.js
+#+STARTUP: latexpreview
+
+* Introduction
+
+- Missing data mechanism (MDM)
+- Notation
+- Pattern mixture models
+
+** Missing Data Mechanism
+
+-  Missing data mechanism: $$p( \mathbf r|  y,  x,  \phi(\mathbf \omega))$$
+-  Missing Complete At Random (MCAR): $$p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) =   p(\mathbf r | \mathbf x, \mathbf \phi)$$
+-  Missing At Random (MAR): $$ p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) =   p(\mathbf r | y_{obs}, \mathbf x, \mathbf \phi)$$
+-  Missing Not At Random (MNAR), for $y_{mis} \neq y_{mis}\prime$: $$p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) \neq   p(\mathbf r | y_{obs}, y_{mis}\prime, \mathbf x, \mathbf \phi)$$
+
+** Notation
+
+-  Under monotone dropout, WOLOG, denote $$S_i \in \{1, 2, \ldots, J\}$$
+   to be the number of observed $Y_{ij}'s$ for subject $i$,
+-  $\mathbf Y_i = (Y_{i1}, Y_{i2}, \ldots, Y_{iJ})^{T}$ to be the full
+   data response vector for subject $i$,
+-  $J$ is the maximum follow up time.
+-  We assume $Y_{i1}$ is always observed.
+
+#+Reveal: split
+
+-  We are interested in the $\tau$-th marginal quantile regression
+   coefficients
+   $$\mathbf \gamma_j = (\gamma_{j1}, \gamma_{j2}, \ldots, \gamma_{jp})^T$$,
+   $$
+     Pr (Y_{ij} \leq \mathbf x_i^{T} \mathbf \gamma_j ) = \tau $$
+   where $\mathbf x_i$ is a $p \times 1$ vector of covariates for
+   subject $i$.
+-  Let $$
+     p_k(Y) = p(Y | S = k), \quad  p_{\geq k} (Y)  = p(Y | S \geq k)
+   $$ be the densities of response $\mathbf Y$ given follow-up time
+   $S=k$ and $S \geq k$. And $Pr_k$ be the corresponding probability
+   given $S = k$.
+
+** Pattern Mixture Model
+
+-  Mixture models factor the joint distribution of response and
+   missingness as $$
+     p (\mathbf y, \mathbf S |\mathbf x, \mathbf \omega) = p (\mathbf y|\mathbf S, \mathbf x, \mathbf \omega) p (\mathbf S | \mathbf x, \mathbf \omega).
+   $$
+-  The full-data response distribution is given by $$
+     p (\mathbf y | \mathbf x, \mathbf \omega) = \sum_{S \in \mathcal{S}} p(\mathbf y| \mathbf S, \mathbf x, \mathbf \theta) p (\mathbf S | \mathbf x, \mathbf \phi),
+   $$ where $\mathcal{S}$ is the sample space for dropout time $S$ and
+   the parameter vector $\mathbf \omega$ is partitioned as
+   $(\mathbf \theta, \mathbf \phi)$.
+-  Furthermore, the conditional distribution of response within patterns
+   can be decomposed as $$
+     P (Y_{obs}, Y_{mis} | \mathbf S, \mathbf \theta) = P
+     (Y_{mis}|Y_{obs}, \mathbf S, \mathbf \theta_E) P (Y_{obs} | \mathbf S, \mathbf
+     \theta_{y, O}),
+   $$
+-  $\mathbf \theta_E$: extrapolation distribution
+-  $\mathbf \theta_{y, O}$ : distribution of observed responses
+
+* Model Settings
+
+-  Multivariate normal distributions within pattern
+-  The marginal quantile regression models as: $$
+     Pr (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j ) = \tau$$
+- For $j = 1$:$$ p_k(y_{i1}) = N (\Delta_{i1} +  \beta_1^{(k)},
+      \sigma_1^{(k)}  ), k = 1, \ldots, J$$
+- For $2 \leq j \leq J$:
+  \begin{array}{l}
+       \displaystyle p_k(y_{ij}|\mathbf y_{ij^{-}}) =
+      \begin{cases}
+        \textrm{N} \big (\Delta_{ij} + \mathbf y_{ij^{-}}^T \mathbf
+        \beta_{y,j-1},
+        \sigma_j \big), & k \geq j ;  \\
+        \textrm{N} \big ( \chi(\mathbf x_{i}, \mathbf y_{ij^{-}}),
+        \sigma_j \big), & k < j ;  \\
+      \end{cases}
+    \end{array}
+- For $S$: $$ S_{i} = k \sim \textrm{Multinomial}(1, \mathbf \phi)$$
+
+** Intuition
+
+-  Embed the marginal quantile regressions directly in the model through
+   constraints in the likelihood of pattern mixture models
+-  The mixture model allows the marginal quantile regression
+   coefficients to differ by quantiles. Otherwise, the quantile lines
+   would be parallel to each other.
+-  The mixture model also allows sensitivity analysis.
+
+* Missing Data Mechanism
+
+-  Mixture models are not identified due to insufficient information
+   provided by observed data.
+-  Specific forms of missingness are needed to induce constraints to
+   identify the distributions for incomplete patterns, in particular,
+   the extrapolation distribution
+-  In mixture models , MAR holds (Molenberghs et al. 1998; Wang &
+   Daniels, 2011) if and only if, for each $j \geq 2$ and $k < j$: $$
+     p_k(y_j|y_1, \ldots, y_{j-1}) = p_{\geq j}(y_j|y_1, \ldots, y_{j-1}).
+   $$
+-  When $2 \leq j \leq J$ and $k < j$, $Y_j$ is not observed, thus
+   $h_0^{(k)}$ can not be identified from the observed data.
+
+** Sensitivity Analysis
+
+- Thus $\mathbf \xi_s=(h_0^{(k)})$ is a set of sensitivity parameters (Daniels & Hogan, 2008), where $k =1, ..., J-1$.
+- $\mathbf \xi_s = \mathbf \xi_{s0} = \mathbf 0$, MAR holds.
+- $\mathbf \xi_s$ is fixed at $\mathbf \xi_s \neq \mathbf \xi_{s0}$,
+   MNAR.
+- We can vary $\mathbf \xi_s$ around $\mathbf 0$ to examine the impact
+   of different MNAR mechanisms.
+
+** Calculation of $\Delta_{ij}$ ($j = 1$)
+
+- $\Delta_{ij}$ depends on subject-specific covariates $\mathbf x_{i}$, thus $\Delta_{ij}$ needs to be calculated for each subject.
+- $\Delta_{i1}$: $$ \tau = \sum_{k = 1}^J \phi_k \Phi \left( \frac{\mathbf x_{i1}^T
+        \mathbf \gamma_1 - \Delta_{i1} - \mathbf x_{i1}^T\mathbf
+        \beta_1^{(k)}}{ \sigma_1^{(k)} } \right)$$
+- The equation is continuous and monotone in $\Delta_{i1}$
+- Thus it can be solved by a standard numerical root-finding method (e.g. bisection method) with minimal difficulty.
+
+** Lemma
+\begin{array}{l}
+\displaystyle \int \Phi \left( \frac{x-b}{a} \right) d\Phi(x; \mu, \sigma)  =
+\begin{cases}
+1- \Phi \left( \frac{b-\mu}{\sigma} \big /
+\sqrt{\frac{a^2}{\sigma^2}+1} \right) & a > 0, \\
+\Phi \left( \frac{b-\mu}{\sigma} \big /
+\sqrt{\frac{a^2}{\sigma^2}+1} \right) & a < 0,
+\end{cases}
+\end{array}
+
+** Calculation of $\Delta_{ij}, 2\leq j \leq J$
+
+- Recursively for the first multiple integral, apply lemma once to obtain:
+
+  \begin{align*}
+    Pr_1 (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j) & =
+    \idotsint
+    Pr_1 (Y_{ij} \leq \mathbf x_{i}^T\mathbf \gamma_j |\mathbf x_{i}, \mathbf Y_{ij^{-}})\\
+    & \quad  dF_1(Y_{i(j-1)}|\mathbf x_{i}, \mathbf Y_{i(j-1)^{-}}) \cdots d F_1 (Y_{i1} |\mathbf x_{i}), \\
+    & = \idotsint \Phi \left( \frac{Y_{i(j-2)} - b^{*}}{a^{*}}
+    \right) dF_1(Y_{i(j-2)}|\mathbf x_{i}, \mathbf Y_{i(j-2)^{-}})\cdots d F_1 (Y_{i1} | \mathbf x_{i}).
+  \end{align*}
+
+Then, by recursively applying lemma $(j-1)$ times, each multiple
+integral in equation can be simplified to single normal CDF.
+
+* Estimation
+
+The observed data likelihood for an individual $i$ with follow-up time
+$S_i = k$ is
+\begin{align}
+L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
+  \phi_kp_k (y_k | y_1, \ldots, y_{k-1})
+  p_k (y_{k-1}|y_1, \ldots, y_{k-2}) \cdots p_{k} (y_1), \\
+  & = \phi_k p_{\geq k} (y_k | y_1, \ldots, y_{k-1}) p_{\geq k-1}
+  (y_{k-1}|y_1, \ldots, y_{k-2}) \cdots p_{k} (y_1), \nonumber
+\end{align}
+
+- Use the bootstrap to construct confidence interval and make
+inferences.
+
+** Goodness of Fit Check
+
+#+BEGIN_HTML
+  <!-- A simple goodness-of-fit check can be done by examining normal QQ -->
+  <!-- plots of the fitted residuals from the model. The visual test can help -->
+  <!-- to diagnose if the parametric assumptions are suitable for model. -->
+#+END_HTML
+
+-  Check QQ plots of fitted residuals
+
+#+BEGIN_HTML
+  <!-- After obtaining the MLE, we use the aboved approach to -->
+  <!--  get the fitted $\Delta_{ij}$ for each -->
+  <!-- subject. Then the fitted residuals can be obtained by plugging in the -->
+  <!-- fitted estimates and $\hat{\Delta}_{ij}$ to obtain, -->
+#+END_HTML
+
+$$
+  \hat{\epsilon}_{ij} =
+  \begin{cases}
+    (y_{ij} - \hat{\Delta}_{ij} - \mathbf{x_{i}^T
+    \hat{\beta}_1^{(k)}})/\hat{\sigma}_1^{(k)},& j = 1 \\
+    (y_{ij} - \hat{\Delta}_{ij} - \mathbf{y_{ij^{-}}^T
+    \hat{\beta}_{y,j-1}^{(\geq j)}})/\hat{\sigma}_j^{(\geq j)},& j >
+    1
+  \end{cases}.
+$$
+
+** Curse of Dimensionality
+
+Each pattern $S = k$ has its own set of SP $\mathbf \xi_s^{(k)}$.
+However, to keep the number of SP at a manageable level, we assume
+$\mathbf \xi_s$ does not depend on pattern.
+
+#+BEGIN_HTML
+  <!-- --- -->
+
+  <!-- ## Bayesian MCMC -->
+
+  <!-- For Bayesian inference, we specify priors on the parameters $\mathbf -->
+  <!-- \xi$ and use a block Gibbs sampling method to draw samples from the -->
+  <!-- posterior distribution. Denote all the parameters to sample as : -->
+  <!-- $$ -->
+  <!-- \begin{align*} -->
+  <!--   \mathbf \xi_m &= \left\{ \mathbf \gamma_j, -->
+  <!--     \mathbf \beta_{y,j-1}^{(\geq j)}, \mathbf \alpha_j^{(\geq j)} \right\} -->
+  <!--   \mbox{ for } j = 1, \ldots, J ,\\ -->
+  <!--   \mathbf \xi_s &= \left\{ \mathbf h_j^{(k)}, \mathbf \eta_{j-1}^{(k)},  \delta_j^{(k)} -->
+  <!--   \right\} -->
+  <!--   \mbox{ for } k = 1, \ldots, j-1; 2 \leq j \leq J. -->
+  <!-- \end{align*} -->
+  <!-- $$ -->
+  <!-- Comma separated parameters are marked to sample as a block.  Updates -->
+  <!-- of $\mathbf \xi_m$ require a Metropolis-Hasting algorithm, while -->
+  <!-- $\mathbf \xi_s$ samples are drawn directly from priors as desired for -->
+  <!-- missingness mechanism assumptions. -->
+
+  <!-- --- -->
+
+  <!-- ## Updating -->
+
+  <!-- - MAR or MNAR assumptions are implemented via specific priors. -->
+  <!-- - Details for updating parameters are: -->
+  <!--    - $\mathbf \gamma_{1} $: Use Metropolis-Hasting algorithm. -->
+  <!--      - Draw ($\mathbf \gamma_{1}^c$) candidates from candidate -->
+  <!--          distribution; -->
+  <!--      - Based on the new candidate parameter $\mathbf \xi^c$, calculate -->
+  <!--      candidate $\Delta_{ij}^c$ for each subject $i$ -->
+  <!--      - Plug in $\Delta_{ij}^c$ in likelihood to get -->
+  <!--          candidate likelihood; -->
+  <!--      - Compute Metropolis-Hasting ratio, and accept the candidate -->
+  <!--          value or keep the previous value. -->
+  <!--    - For the rest of the identifiable parameters, algorithms for -->
+  <!--      updating the samples are all similar to $\mathbf \gamma_j$. -->
+  <!--    - For sensitivity parameters, because we do not get any -->
+  <!--    information from the data, we sample them from priors, which are -->
+  <!--    specified based on assumptions about the missingness. -->
+
+  <!-- --- -->
+
+  <!-- ## Simulation Study -->
+
+  <!-- ### Method candidates -->
+
+  <!-- - *rq* function (noted as RQ) in *quantreg* R package (<a href="http://CRAN.R-project.org/package=quantreg">Koenker, 2012</a>) -->
+  <!-- - Bottai's algorithm (<a href="http://dx.doi.org/10.2427/8758">Bottai & Zhen, 2013</a>) (noted as BZ). -->
+  <!-- - <a href="http://dx.doi.org/10.2427/8758">Bottai & Zhen (2013)</a> impute missing -->
+  <!--   outcomes using the estimated conditional quantiles of missing outcomes -->
+  <!--   given observed data. Their approach does not make distributional -->
+  <!--   assumptions similar to *rq* and assumes ignorable missing data. -->
+
+  <!-- --- &twocol -->
+
+  <!-- ## Simulation Study Design -->
+
+  <!-- Candidate: *RQ*, *BZ* (Bottai 2013), Our proposed method -->
+
+  <!-- *** left -->
+
+  <!-- - Scenario 1: MAR -->
+  <!-- - Scenario 2: MNAR with misspecification -->
+  <!-- - Scenario 3: MNAR with correct MNAR MDM -->
+  <!-- - Bivariate responses, $Y_2$ were partly missing -->
+  <!-- - For each scenario, -->
+  <!--   - N(0, 1) -->
+  <!--   - $T_3$ -->
+  <!--   - Laplace distribution (rate = 1) -->
+  <!-- - 100 data sets. For each set there are 200 bivariate observations -->
+  <!-- - Covariate $x$ was sampled from Uniform(0,2). -->
+
+  <!-- *** right -->
+
+  <!-- - The three models for the -->
+  <!--   full data response $\mathbf Y_i$ were: -->
+  <!-- $$ -->
+  <!-- \begin{align*} -->
+  <!--   Y_{i1} | R = 1 & \sim 2 + x_i +  \epsilon_{i1} , \\ -->
+  <!--   Y_{i1}| R = 0 & \sim  -2 - x_i +  \epsilon_{i1} , \\ -->
+  <!--   Y_{i2}| R = 1, Y_{i1}&\sim 1 - x_i - 1/2Y_{i1} + \epsilon_{i2}, -->
+  <!-- \end{align*} -->
+  <!-- $$ -->
+  <!-- - $Pr (R = 1) = 0.5$ -->
+  <!-- - When $R = 0$, $Y_{i2}$ is not observed, so $p(Y_{i2}| R = 0, Y_{i1})$ is not identifiable from -->
+  <!--   observed data. -->
+  <!-- - S2 and S3:  assume -->
+  <!-- $$Y_{i2}| R = 0, Y_{i1} \sim 3 - x_i - 1/2Y_{i1} + \epsilon_{i2}$$ -->
+
+  <!-- <\!-- Under an MAR assumption, the sensitivity parameter $\mathbf \xi_s$ is -\-> -->
+  <!-- <\!-- fixed at $\mathbf 0$. For -\-> -->
+  <!-- <\!-- *rq* function from *quantreg* R package, because only -\-> -->
+  <!-- <\!-- $Y_{i2}|R = 1$ is observed, the quantile regression for $Y_{i2}$ can -\-> -->
+  <!-- <\!-- only be fit from the information of $Y_{i2}|R = 1$ vs $x$. -\-> -->
+
+  <!-- --- -->
+
+  <!-- ## Evaluation -->
+
+  <!-- - Fit quantile regression for quantiles $\tau =$ 10%, 30%, 50%, 70%, 90% -->
+  <!-- - Parameter estimates were evaluated by mean -->
+  <!--   squared error (MSE), -->
+  <!-- $$ -->
+  <!--   \mbox{MSE} (\gamma_{ij}) = \frac{1}{100} \sum_{k = 1}^{100} -->
+  <!--   \left( \hat{\gamma}_{ij}^{(k)}  - \gamma_{ij}\right)^2, i = 0, 1 -->
+  <!-- $$ -->
+  <!-- where $\gamma_{j}$ is the true value for quantile regression -->
+  <!-- coefficient, $\hat{\gamma}_{j}^{(k)}$ is the maximum likelihood -->
+  <!-- estimates in $k$-th simulated dataset ($(\gamma_{01}, \gamma_{11})$ -->
+  <!-- for $Y_{i1}$, $(\gamma_{02}, \gamma_{12})$ for $Y_{i2}$). -->
+
+  <!-- Monte Carlo standard error (MCSE) is used to evaluate the significance -->
+  <!-- of difference between methods. It is calculated by -->
+  <!-- $$ -->
+  <!--   \mbox{MCSE} = \hat{\mbox{sd}}(\mbox{Bias}^2)/\sqrt{N}, -->
+  <!-- $$ -->
+  <!-- where $\hat{\mbox{sd}}$ is the sample standard deviation and -->
+  <!-- $\mbox{Bias} = \hat{\gamma}_{ij} - \gamma_{ij}$ and $N$ is the number -->
+  <!-- of simulations. -->
+
+  <!-- --- &twocol -->
+
+  <!-- ## Results -->
+
+  <!-- *** left -->
+
+  <!-- - Ours and BZ are closer to the true value for all quantiles from 10% to 90%. -->
+  <!-- - Under normal errors, the -->
+  <!-- proposed methods dominates both *RQ* and *BZ* in most cases for -->
+  <!-- MAR, incorrect MAR, and MNAR. -->
+  <!-- - For the heavier tail distributions,our approach shows better -->
+  <!-- performance in middle quantiles and worse performance for extreme -->
+  <!-- quantiles for observed data $Y_1$. -->
+  <!-- - Our algorithm provides larger gains over *RQ* function for -->
+  <!-- each marginal quantile for the second component $Y_2$, which is -->
+  <!-- missing for some units, since *RQ* implicitly assumes MAR missingness. -->
+
+  <!-- *** right -->
+
+  <!-- - The difference in MSE becomes larger for the upper quantiles because -->
+  <!-- $Y_2 |R = 0$ tends to be larger than $Y_2 | R = 1$; therefore, the -->
+  <!-- *RQ* method using only the observed $Y_2$ yields larger bias for upper -->
+  <!-- quantiles. -->
+  <!-- - Bottai's approach does much better than *rq* function for missing -->
+  <!-- data because it imputes missing responses under MAR. -->
+  <!-- - It also has smaller MSE than ours on extreme -->
+  <!-- quantiles when distribution has heavy tail. -->
+  <!-- - Our approach has advantages in the middle quantiles (30% - 70%). -->
+  <!-- - We also see more gains over *BZ* in the quantile regression -->
+  <!-- slope estimates for $Y_2$. -->
+
+  <!-- --- -->
+
+  <!-- ## Goodness of Fit Check -->
+
+  <!-- - [ ] insert sample QQ plots here -->
+
+  <!-- - To assess the goodness of fit, we examined the QQ plot of fitted -->
+  <!-- residuals to check the normality assumption on the error term for a -->
+  <!-- random sample of the simulated datasets. -->
+  <!-- - When our error assumption is correct (normal), the QQ plot reflects -->
+  <!-- the fitted residuals follow exact a normal distribution. -->
+  <!-- - However, when we misspecified the error distribution, the proposed -->
+  <!-- diagnostic method did clearly suggest heavier tail error than normal, -->
+  <!-- and this also demonstrates why our approach has some disadvantages for -->
+  <!-- regression on extreme quantiles when errors are not normal. -->
+#+END_HTML
+
+
+
+
+* Real Data Analysis: Tours
+
+-  Weights were recorded at baseline ($Y_0$), 6 months ($Y_1$) and 18
+   months ($Y_2$).
+-  We are interested in how the distributions of weights at six months
+   and eighteen months change with covariates.
+-  The regressors of interest include *AGE*, *RACE* (black and white)
+   and *weight at baseline* ($Y_0$).
+-  Weights at the six months ($Y_1$) were always observed and 13 out of
+   224 observations (6%) were missing at 18 months ($Y_2$).
+-  The *AGE* covariate was scaled to 0 to 5 with every increment
+   representing 5 years.
+-  We fitted regression models for bivariate responses
+   $\mathbf Y_i = (Y_{i1}, Y_{i2})$ for quantiles (10%, 30%, 50%, 70%,
+   90%).
+-  We ran 1000 bootstrap samples to obtain 95% confidence intervals.
+
+
+
+** Results
+
+-  For weights of participants at six months, weights of whites are
+   generally 4kg lower than those of blacks for all quantiles, and the
+   coefficients of race are negative and significant.
+-  Weights of participants are not affected by age since the
+   coefficients are not significant. Differences in quantiles are
+   reflected by the intercept.
+-  Coefficients of baseline weight show a strong relationship with
+   weights after 6 months.
+-  For weights at 18 months after baseline, we have similar results.
+-  Weights at 18 months still have a strong relationship with baseline
+   weights.
+-  However, whites do not weigh significantly less than blacks at 18
+   months unlike at 6 months.
+
+** Sensitivity Analysis
+
+We also did a sensitivity analysis based on an assumption of MNAR. -
+Based on previous studies of pattern of weight regain after lifestyle
+treatment (Wadden et al. 2001; Perri et al. 2008), we assume that $$
+  E(Y_2 - Y_1| R=0) = 3.6 \mbox{kg},
+$$ which corresponds to 0.3kg regain per month after finishing the
+initial 6-month program. - We incorporate the sensitivity parameters in
+the distribution of $Y_2|Y_1, R=0$ via the following restriction: $$
+  \Delta_{i2} + \mathbf x_{i2}^T \mathbf h_2^{(1)} + E(y_{i1}|R=0)(\beta_{y,1}^{(1)} +\eta_1^{(1)} - 1) = 3.6 \mbox{kg}.
+$$
+
+*** Results
+
+-  There are not large differences for estimates for $Y_2$ under MNAR vs
+   MAR.
+-  This is partly due to the low proportion of missing data in this
+   study.
+
+** Goodness of Fit Check
+
+#+CAPTION: GoF
+
+[[assets/img/ToursMNARGoF.png]]
+
+-  We also checked the goodness of fit via QQ plots on the fitted
+   residuals for each quantile regression fit.
+
+-  The QQ plots showed minimal evidence against the assumption that the
+   residuals were normally distributed; thus we were confident with the
+   conclusion of our quantile regression models.
+
+* Summary
+
+-  Developed a marginal quantile regression model for data with monotone
+   missingness.
+-  Used a pattern mixture model to jointly model the full data response
+   and missingness.
+-  Estimate marginal quantile regression coefficients instead of
+   conditional on random effects
+-  Allows non-parallel quantile lines over different quantiles via the
+   mixture distribution
+-  Allows for sensitivity analysis which is essential for the analysis
+   of missing data (NAS 2010).
+-  Allows the missingness to be non-ignorable.
+-  Recursive integration simplifies computation and can be implemented
+   in high dimensions.
+
+#+BEGIN_HTML
+  <!-- - Illustrated how to put informative priors for Bayesian inference and -->
+  <!-- how to find sensitivity parameters to allow different missing data -->
+  <!-- mechanisms in general. -->
+
+
+  <!-- - Simulation studies demonstrates that our approach has -->
+  <!-- smaller MSE than the traditional frequentist method *rq* function for -->
+  <!-- most cases, especially for inferences of partial missing -->
+  <!-- responses. -->
+  <!-- - Has advantages over Bottai's appraoch for middle -->
+  <!-- quantiles regression inference even when the distribution is -->
+  <!-- mis-specified. -->
+  <!-- - However, our approach also shows little bias for -->
+  <!-- extreme quantiles comparing to <a href="http://dx.doi.org/10.2427/8758">Bottai & Zhen (2013)</a> if -->
+  <!-- error is mis-specified. -->
+
+  <!-- --- -->
+#+END_HTML
+
+** Future Work
+
+-  Sequential multivariate normal distribution for each component in the
+   PMM might be too restrictive
+-  Simulation results showed that the mis-specification of the error
+   term did have an impact on the extreme quantile regression
+   inferences.
+-  Working on replacing it with a non-parametric model, for example, a
+   Dirichlet process mixture of normals.
+
+#+BEGIN_HTML
+  <!-- --- -->
+
+  <!-- ## References -->
+  <!-- ```{r include=FALSE} -->
+  <!-- out <- bibliography("html", ordering = c("authors", "year", "title", "journal")) -->
+  <!-- ``` -->
+
+  <!-- ```{r reference, results = "asis", echo = FALSE} -->
+  <!-- cat(out[1:5]) -->
+  <!-- ``` -->
+
+#+END_HTML
