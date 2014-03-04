@@ -11,6 +11,7 @@ highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : github      # zenburn, github, tomorrow
 widgets     : [mathjax, bootstrap]            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft, selfcontained}
+github      : {user: liuminzhao, repo: enar2014}
 
 ---
 
