@@ -1,59 +1,55 @@
 ---
 title       : Quantile Regression in the Presence of Monotone Missingness with Sensitivity Analysis
 subtitle    : 2014 ENAR Presentation
-author      : Minzhao Liu
-job         : 'Supervisor: Dr. Mike Daniels. Department of Statistics, University of Florida'
+author      : Minzhao Liu, Department of Statistics, The University of Florida
+job         : Mike Daniels, Department of Integrative Biology, The University of Texas at Austin
 license     : by-nc-sa
 framework   : io2012 #{io2012, html5slides, deckjs, shower, dzslides, ...}
 deckjs:
    theme: web-2.0
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
-hitheme     : github      # zenburn, github, tomorrow
+hitheme     : zenburn      # zenburn, github, tomorrow
 widgets     : [mathjax, bootstrap]            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft, selfcontained}
 
----
+--- &twocol
 
-## Outline
+## Quantile Regression
 
-- Introduction
-- Models
-- Real Data Analysis: TOURS
-- Summary
+*** =left
 
----
+![engel](assets/img/engel.png)
 
-## Missing Data Mechanism
+*** =right
 
-- Missing data mechanism: $$p(\mathbf r| \mathbf y, \mathbf x, \mathbf \phi(\mathbf \omega))$$
-- Missing Complete At Random (MCAR)
-$$
-    p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) =   p(\mathbf r | \mathbf x, \mathbf \phi).
-$$
-- Missing At Random (MAR)
-$$
-    p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) =   p(\mathbf r | y_{obs}, \mathbf x, \mathbf \phi).
-$$
-- Missing Not At Random (MNAR), for $y_{mis} \neq y_{mis}\prime$,
-$$p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) \neq   p(\mathbf r | y_{obs}, y_{mis}\prime, \mathbf x, \mathbf \phi).$$
+- Engel data on food expenditure vs household income for a sample of 235 19th century working class Belgian households.
+- More information from quantile regression
+  - Slope change
+  - Skewness
+- Less sensitive to heterogeneity and outliers
 
 ---
 
-## Notation
+## Monotone Missingness
 
-- Under monotone dropout, WOLOG, denote $S_i \in \{1, 2, \ldots, J\}$ to be the number of observed $Y_{ij}'s$ for subject $i$,
-- $\mathbf Y_i = (Y_{i1}, Y_{i2}, \ldots, Y_{iJ})^{T}$ to be the full data response vector for subject $i$,
-- $J$ is the maximum follow up time.
-- We assume $Y_{i1}$ is always observed.
-- We are interested in the $\tau$-th marginal quantile regression coefficients $\mathbf \gamma_j = (\gamma_{j1}, \gamma_{j2}, \ldots, \gamma_{jp})^T$,
+A missing data pattern is monotone if, for each individual, there exists a measurement occasion $j$ such that
+$R_1 = ··· = R_{j−1} = 1$ and $R_j = R_{j+1} = · · · = R_J = 0$;
+that is, all responses are observed through time $j − 1$, and no responses are observed thereafter.
+$S$ is called *follow-up* time.
+
+| Subject | T1 |        T2 |          T3 |  T4|      S |
+|---------|----|-----------|-------------|----|------|
+|Subject 1  | $Y_{11}$ | $Y_{12}$ |  |  | 2|
+|Subject 2  | $Y_{21}$ | $Y_{22}$ | $Y_{23}$ | $Y_{24}$ | 4 |
+
+- Assumption: $Y_{i1}$ is always observed.
+- Interested: $\tau$-th **marginal** quantile regression coefficients $\mathbf \gamma_j = (\gamma_{j1}, \gamma_{j2}, \ldots, \gamma_{jp})^T$,
 $$
   Pr (Y_{ij} \leq \mathbf x_i^{T} \mathbf \gamma_j ) = \tau, \mbox{ for } j = 1, \ldots, J,
 $$
-where $\mathbf x_i$ is a $p \times 1$ vector of covariates for subject $i$.
-- $$
+$$
   p_k(Y) = p(Y | S = k), \quad  p_{\geq k} (Y)  = p(Y | S \geq k)
 $$
-be the densities of response $\mathbf Y$ given follow-up time $S=k$ and $S \geq k$. And $Pr_k$ be the corresponding probability given $S = k$.
 
 ---
 
@@ -61,14 +57,14 @@ be the densities of response $\mathbf Y$ given follow-up time $S=k$ and $S \geq 
 
 - Mixture models factor the joint distribution of response and missingness as
 $$
-  p (\mathbf y, \mathbf S |\mathbf x, \mathbf \omega) = p (\mathbf y|\mathbf S, \mathbf x, \mathbf \omega) p (\mathbf S | \mathbf x, \mathbf \omega).
+  p (\mathbf Y, \mathbf S |\mathbf x, \mathbf \omega) = p (\mathbf Y|\mathbf S, \mathbf x, \mathbf \omega) p (\mathbf S | \mathbf x, \mathbf \omega).
 $$
 - The full-data response distribution is given by
 $$
-  p (\mathbf y | \mathbf x, \mathbf \omega) = \sum_{S \in \mathcal{S}} p(\mathbf y| \mathbf S, \mathbf x, \mathbf \theta) p (\mathbf S | \mathbf x, \mathbf \phi),
+  p (\mathbf Y | \mathbf x, \mathbf \omega) = \sum_{S \in \mathcal{S}} p(\mathbf Y| \mathbf S, \mathbf x, \mathbf \theta) p (\mathbf S | \mathbf x, \mathbf \phi),
 $$
-where $\mathcal{S}$ is the sample space for dropout time $S$ and the parameter vector $\mathbf \omega$ is partitioned as $(\mathbf \theta, \mathbf \phi)$.
-- Furthermore, the conditional distribution of response within patterns can be decomposed as
+where $\mathcal{S}$ is the sample space for follow-upch time $S$ and the parameter vector $\mathbf \omega$ is partitioned as $(\mathbf \theta, \mathbf \phi)$.
+- The conditional distribution of response within patterns can be decomposed as
 $$
   P (Y_{obs}, Y_{mis} | \mathbf S, \mathbf \theta) = P
   (Y_{mis}|Y_{obs}, \mathbf S, \mathbf \theta_E) Pr (Y_{obs} | \mathbf S, \mathbf
@@ -78,46 +74,32 @@ $$
 - $\mathbf \theta_E$:  extrapolation distribution
 - $\mathbf \theta_{y, O}$ : distribution of observed responses
 
-<!-- ### Sensitivity Parameters -->
-
-<!-- A reparameterization $\mathbf \xi(\mathbf \alpha) = (\mathbf \xi_S, \mathbf \xi_M)$: -->
-
-<!-- - $\mathbf \xi_S$ is a nonconstant function of $\mathbf \theta_E$, -->
-<!-- -  the observed-data likelihood -->
-<!-- $$ -->
-<!--       L(\mathbf \xi_S, \mathbf \xi_M | y_{obs}, \mathbf r) -->
-<!-- $$ -->
-<!-- is constant as a function of $\mathbf \xi_S$, and -->
-<!-- -  at a fixed value of $\mathbf \xi_S$, the observed data likelihood is a nonconstant function of $\mathbf \xi_M$, -->
-
-<!-- then $\mathbf \xi_S$ is a sensitivity parameter. -->
-
 ---
 
 ## Model Settings
 
-- Multivariate normal distributions within pattern
-- The marginal quantile regression models as:
+- Multivariate normal distributions within each pattern
+$$
+  \begin{align}
+       Y_{i1}|S_i = k & \sim N (\Delta_{i1} +  \mathbf \beta_1^{(k)}, \sigma_1^{(k)}  ), k = 1, \ldots, J,\\
+       Y_{ij}|\mathbf Y_{ij^{-}}, S_i = k & \sim
+      \begin{cases}
+        \textrm{N} \big (\Delta_{ij} + \mathbf y_{ij^{-}}^T \mathbf
+        \beta_{Y,j-1},
+        \sigma_j \big), & k \geq j ;  \\
+        \textrm{N} \big ( \chi(\mathbf x_{i}, \mathbf Y_{ij^{-}}),
+        \sigma_j \big), & k < j ;  \\
+      \end{cases}, \mbox{ for } 2 \leq j \leq J,  \\
+       S_{i} = k|\: \mathbf x_{i} & \sim \textrm{Multinomial}(1, \mathbf \phi).
+    \end{align}
+$$
+
+- The marginal quantile regression models:
 $$
   Pr (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j ) = \tau,
 $$
-$$
-  \begin{array}{l}
-      \displaystyle p_k(y_{i1}) = N (\Delta_{i1} +  \mathbf \beta_1^{(k)},
-      \sigma_1^{(k)}  ), k = 1, \ldots, J,\\
-       \displaystyle p_k(y_{ij}|\mathbf y_{ij^{-}}) =
-      \begin{cases}
-        \textrm{N} \big (\Delta_{ij} + \mathbf y_{ij^{-}}^T \mathbf
-        \beta_{y,j-1},
-        \sigma_j \big), & k \geq j ;  \\
-        \textrm{N} \big ( \chi(\mathbf x_{i}, \mathbf y_{ij^{-}}),
-        \sigma_j \big), & k < j ;  \\
-      \end{cases}, \mbox{ for } 2 \leq j \leq J,  \\
-      \displaystyle S_{ij} = k|\: \mathbf x_{i} \sim \textrm{Multinomial}(1, \mathbf \phi),
-    \end{array}
-$$
-- $\chi(\mathbf x_{i}, \mathbf y_{ij^{-}})$ is the mean of the unobserved data distribution and allows sensitivity analysis by varying assumptions on $\chi$; for computational reasons we assume that $\chi$ is linear in $y_{ij^{-}}$.
-- For example, here we specify
+- $\chi(\mathbf x_{i}, \mathbf y_{ij^{-}})$ is the mean of the unobserved data distribution and allows sensitivity analysis by varying assumptions on $\chi$; for computational reasons, we assume that $\chi$ is linear in $y_{ij^{-}}$.
+- Here we specify
 $$
 \chi(\mathbf x_{i}, \mathbf y_{ij^{-}}) = \Delta_{ij}  + \mathbf y_{ij^{-}}^T \mathbf \beta_{y,j-1} + h_{0}^{(k)}.
 $$
@@ -153,14 +135,12 @@ $$
 - Embed the marginal quantile regressions directly in the model through constraints in the likelihood of pattern mixture models
 - The mixture model allows the marginal quantile regression coefficients to differ by quantiles. Otherwise, the quantile lines would be parallel to each other.
 - The mixture model also allows sensitivity analysis.
-- For identifiability of the observed data distribution, we apply the following constraints,
-$$
- \sum_{k=1}^J \beta_{1}^{(k)} = 0.
-$$
 
 ---
 
 ## Missing Data Mechanism and Sensitivity Analysis
+
+
 
 - Mixture models are not identified due to insufficient information provided by observed data.
 - Specific forms of missingness are needed to induce constraints to identify the distributions for incomplete patterns, in particular, the extrapolation distribution
@@ -169,63 +149,30 @@ $$
 $$
   p_k(y_j|y_1, \ldots, y_{j-1}) = p_{\geq j}(y_j|y_1, \ldots, y_{j-1}).
 $$
-- When $2 \leq j \leq J$ and $k < j$, $Y_j$ is not observed, thus $h_0^{(k)}$ can not be identified from the observed data.
+
+
 
 ---
 
 ## Sensitivity Analysis
 
+$$
+       Y_{ij}|\mathbf Y_{ij^{-}}, S_i = k \sim
+      \begin{cases}
+        \textrm{N} \big (\Delta_{ij} + \mathbf y_{ij^{-}}^T \mathbf
+        \beta_{Y,j-1},
+        \sigma_j \big), & k \geq j ;  \\
+        \textrm{N} \big (\Delta_{ij}  + \mathbf y_{ij^{-}}^T \mathbf \beta_{y,j-1} + h_{0}^{(k)},
+        \sigma_j \big), & k < j ;  \\
+      \end{cases}, \mbox{ for } 2 \leq j \leq J,
+$$
+
+- When $2 \leq j \leq J$ and $k < j$, $Y_j$ is not observed, thus $h_0^{(k)}$ can not be identified from the observed data.
 - $\mathbf \xi_s = (h_0^{(k)})$ is a set of sensitivity parameters
 (Daniels & Hogan 2008), where $k =1, ..., J-1$.
 - $\mathbf \xi_s = \mathbf \xi_{s0} = \mathbf 0$, MAR holds.
 - $\mathbf \xi_s$ is fixed at $\mathbf \xi_s \neq \mathbf \xi_{s0}$, MNAR.
 - We can vary $\mathbf \xi_s$ around $\mathbf 0$ to examine the impact of different MNAR mechanisms.
-
----
-
-## Calculation of $\Delta_{ij}$ ($j = 1$)
-
-$\Delta_{ij}$ depends on subject-specific covariates $\mathbf x_{i}$, thus $\Delta_{ij}$ needs to be calculated for each subject. We now illustrate how to calculate $\Delta_{ij}$ given all the other parameters $\mathbf \xi = (\mathbf \xi_m, \xi_s)$.
-
-**$\Delta_{i1}: $** Expand equation :
-$$
-\begin{align*}
-    \tau = \sum_{k = 1}^J \phi_k \Phi \left( \frac{\mathbf x_{i1}^T
-        \mathbf \gamma_1 - \Delta_{i1} -
-        \beta_1^{(k)}}{ \sigma_1^{(k)} } \right),
-  \end{align*}
-$$
-  where $\Phi$ is the standard normal CDF. Because the above equation   is continuous and monotone in $\Delta_{i1}$, it can be solved by a   standard numerical root-finding method (e.g. bisection method) with   minimal difficulty.
-
----
-
-## Calculation of $\Delta_{ij}, 2\leq j \leq J$
-
-Lemma:
-$$
-\begin{array}{l}
-\displaystyle \int \Phi \left( \frac{x-b}{a} \right) d\Phi(x; \mu, \sigma)  =
-\begin{cases}
-1- \Phi \left( \frac{b-\mu}{\sigma} \big /
-\sqrt{\frac{a^2}{\sigma^2}+1} \right) & a > 0, \\
-\Phi \left( \frac{b-\mu}{\sigma} \big /
-\sqrt{\frac{a^2}{\sigma^2}+1} \right) & a < 0,
-\end{cases}
-\end{array}
-$$
-
-Recursively for the first multiple integral, apply lemma once to obtain:
-
-$$
-  \begin{align*}
-    Pr_1 (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j) & =
-    \idotsint
-    Pr_1 (Y_{ij} \leq \mathbf x_{i}^T\mathbf \gamma_j |\mathbf x_{i}, \mathbf Y_{ij^{-}})\\
-    & \quad  dF_1(Y_{i(j-1)}|\mathbf x_{i}, \mathbf Y_{i(j-1)^{-}}) \cdots d F_1 (Y_{i1} |\mathbf x_{i}), \\
-    & = \idotsint \Phi \left( \frac{Y_{i(j-2)} - b^{*}}{a^{*}}
-    \right) dF_1(Y_{i(j-2)}|\mathbf x_{i}, \mathbf Y_{i(j-2)^{-}})\cdots d F_1 (Y_{i1} | \mathbf x_{i}).
-  \end{align*}
-$$
 
 ---
 
@@ -241,22 +188,17 @@ L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
   (y_{k-1}|y_1, \ldots, y_{k-2}) \cdots p_{k} (y_1), \nonumber
 \end{align}
 $$
+- To facilitate computation of the $\Delta$'s and the likelihood, we propose a tricky way to obtain analytic forms for the required integrals.
 - Use the bootstrap to construct confidence interval and make inferences.
 
-## Goodness of Fit Check
-
-- Check QQ plots of fitted residuals
-$$
-  \hat{\epsilon}_{ij} =
-  \begin{cases}
-    (y_{ij} - \hat{\Delta}_{ij} - \hat{\beta}_1^{(k)})/\hat{\sigma}_1^{(k)},& j = 1 \\
-    (y_{ij} - \hat{\Delta}_{ij} - \mathbf{y_{ij^{-}}^T
-    \hat{\beta}_{y,j-1}})/\hat{\sigma}_j, & j > 1
-  \end{cases}.
-$$
-
 ---
+
 ## Real Data Analysis: Tours
+
+| Subject | 6 Months | 18 Months |   Age |  Race|      Baseline |
+|---------|----|-----------|-------------|----|------|
+|Subject 1  | *$Y_{11}$* | $Y_{12}$ | $x_{11}$  | $x_{12}$ | $Y_{10}$|
+|Subject 2  | *$Y_{21}$* | $Y_{22}$ | $x_{21}$  | $x_{22}$ | $Y_{20}$|
 
 - Weights were recorded at baseline ($Y_0$), 6 months ($Y_1$) and 18 months ($Y_2$).
 - We are interested in how the distributions of weights at six months and eighteen months change with covariates.
@@ -267,15 +209,20 @@ $$
 - We ran 1000 bootstrap samples to obtain 95% confidence intervals.
 
 
----
+--- &twocol
 
 ## Results
 
-- For weights of participants at six months, weights of whites are generally 4kg lower than those of blacks for all quantiles, and the coefficients of race are negative and significant.
-- Weights of participants are not affected by age since the coefficients are not significant. Differences in quantiles are reflected by the intercept.
+*** =left
+
+![engel](assets/img/tours-age-race.png)
+
+*** =right
+
+- For weights of participants at six months, weights of whites are generally 4kg lower than those of blacks for all quantiles significantly.
+- Weights of participants are not affected by age significantly.
 - Coefficients of baseline weight show a strong relationship with weights after 6 months.
 - For weights at 18 months after baseline, we have similar results.
-- Weights at 18 months still have a strong relationship with baseline weights.
 - However, whites do not weigh significantly less than blacks at 18 months unlike at 6 months.
 
 ---
@@ -289,14 +236,14 @@ $$
   E(Y_2 - Y_1| R=0) = 3.6 \mbox{kg},
 $$
 which corresponds to 0.3kg regain per month after finishing the initial 6-month program.
-- Therefore, we specify  $\chi(\mathbf x_{i}, Y_{i1})$ as
+- Specify  $\chi(\mathbf x_{i}, Y_{i1})$ as
 $$
 \chi(\mathbf x_{i},  y_{i1}) = 3.6  + y_{i1},
 $$
 
 ### Results
 
-- There are not large differences for estimates for $Y_2$ under MNAR vs MAR.
+- There are no large differences for estimates for $Y_2$ under MNAR vs MAR.
 - This is partly due to the low proportion of missing data in this study.
 
 ---
@@ -304,13 +251,12 @@ $$
 
 - Developed a marginal quantile regression model for data with monotone missingness.
 - Used a pattern mixture model to jointly model the full data response and missingness.
-- Estimate marginal quantile regression coefficients instead of conditional on random effects
+- Estimate marginal quantile regression coefficients instead of conditional on random effects.
 - Allows for sensitivity analysis which is essential for the analysis of missing data (NAS 2010).
 - Allows the missingness to be non-ignorable.
 - Recursive integration simplifies computation and can be implemented in high dimensions.
 
 ## Future Work
 
-- Sequential multivariate normal distribution for each component in the PMM might be too restrictive
 - Simulation results showed that the mis-specification of the error term did have an impact on the extreme quantile regression inferences.
-- Working on replacing it with a non-parametric model, for example, a Dirichlet process mixture of normals.
+- Working on replacing it with a non-parametric model, for example, a Dirichlet process with mixture of normals.

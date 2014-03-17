@@ -4,7 +4,7 @@
   <title>Quantile Regression in the Presence of Monotone Missingness with Sensitivity Analysis</title>
   <meta charset="utf-8">
   <meta name="description" content="Quantile Regression in the Presence of Monotone Missingness with Sensitivity Analysis">
-  <meta name="author" content="Minzhao Liu">
+  <meta name="author" content="Minzhao Liu, Department of Statistics, The University of Florida">
   <meta name="generator" content="slidify" />
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
     media="only screen and (max-device-width: 480px)" >
   <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
-  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/github.css" />
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/zenburn.css" />
   <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/bootstrap/css/bootstrap.css"></link>
 
   
@@ -34,7 +34,7 @@
   <hgroup class="auto-fadein">
     <h1>Quantile Regression in the Presence of Monotone Missingness with Sensitivity Analysis</h1>
     <h2>2014 ENAR Presentation</h2>
-    <p>Minzhao Liu<br/>Supervisor: Dr. Mike Daniels. Department of Statistics, University of Florida</p>
+    <p>Minzhao Liu, Department of Statistics, The University of Florida<br/>Mike Daniels, Department of Integrative Biology, The University of Texas at Austin</p>
   </hgroup>
   <article></article>  
   <footer class = 'license'>
@@ -48,37 +48,78 @@
     <!-- SLIDES -->
     <slide class="" id="slide-1" style="background:;">
   <hgroup>
-    <h2>Outline</h2>
+    <h2>Quantile Regression</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
-<li>Introduction</li>
-<li>Models</li>
-<li>Real Data Analysis: TOURS</li>
-<li>Summary</li>
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p><img src="assets/img/engel.png" alt="engel"></p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <ul>
+<li>Engel data on food expenditure vs household income for a sample of 235 19th century working class Belgian households.</li>
+<li>More information from quantile regression
+
+<ul>
+<li>Slope change</li>
+<li>Skewness</li>
+</ul></li>
+<li>Less sensitive to heterogeneity and outliers</li>
 </ul>
 
+</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="" id="slide-2" style="background:;">
   <hgroup>
-    <h2>Missing Data Mechanism</h2>
+    <h2>Monotone Missingness</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
-<li>Missing data mechanism: \[p(\mathbf r| \mathbf y, \mathbf x, \mathbf \phi(\mathbf \omega))\]</li>
-<li>Missing Complete At Random (MCAR)
+    <p>A missing data pattern is monotone if, for each individual, there exists a measurement occasion \(j\) such that
+\(R_1 = ··· = R_{j−1} = 1\) and \(R_j = R_{j+1} = · · · = R_J = 0\);
+that is, all responses are observed through time \(j − 1\), and no responses are observed thereafter.
+\(S\) is called <em>follow-up</em> time.</p>
+
+<table><thead>
+<tr>
+<th>Subject</th>
+<th>T1</th>
+<th>T2</th>
+<th>T3</th>
+<th>T4</th>
+<th>S</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Subject 1</td>
+<td>\(Y_{11}\)</td>
+<td>\(Y_{12}\)</td>
+<td></td>
+<td></td>
+<td>2</td>
+</tr>
+<tr>
+<td>Subject 2</td>
+<td>\(Y_{21}\)</td>
+<td>\(Y_{22}\)</td>
+<td>\(Y_{23}\)</td>
+<td>\(Y_{24}\)</td>
+<td>4</td>
+</tr>
+</tbody></table>
+
+<ul>
+<li>Assumption: \(Y_{i1}\) is always observed.</li>
+<li>Interested: \(\tau\)-th <strong>marginal</strong> quantile regression coefficients \(\mathbf \gamma_j = (\gamma_{j1}, \gamma_{j2}, \ldots, \gamma_{jp})^T\),
 \[
-p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) =   p(\mathbf r | \mathbf x, \mathbf \phi).
-\]</li>
-<li>Missing At Random (MAR)
+Pr (Y_{ij} \leq \mathbf x_i^{T} \mathbf \gamma_j ) = \tau, \mbox{ for } j = 1, \ldots, J,
+\]
 \[
-p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) =   p(\mathbf r | y_{obs}, \mathbf x, \mathbf \phi).
+p_k(Y) = p(Y | S = k), \quad  p_{\geq k} (Y)  = p(Y | S \geq k)
 \]</li>
-<li>Missing Not At Random (MNAR), for \(y_{mis} \neq y_{mis}\prime\),
-\[p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) \neq   p(\mathbf r | y_{obs}, y_{mis}\prime, \mathbf x, \mathbf \phi).\]</li>
 </ul>
 
   </article>
@@ -87,45 +128,20 @@ p(\mathbf r |  y_{obs}, y_{mis}, \mathbf x, \mathbf \phi) =   p(\mathbf r | y_{o
 
 <slide class="" id="slide-3" style="background:;">
   <hgroup>
-    <h2>Notation</h2>
-  </hgroup>
-  <article data-timings="">
-    <ul>
-<li>Under monotone dropout, WOLOG, denote \(S_i \in \{1, 2, \ldots, J\}\) to be the number of observed \(Y_{ij}'s\) for subject \(i\),</li>
-<li>\(\mathbf Y_i = (Y_{i1}, Y_{i2}, \ldots, Y_{iJ})^{T}\) to be the full data response vector for subject \(i\),</li>
-<li>\(J\) is the maximum follow up time.</li>
-<li>We assume \(Y_{i1}\) is always observed.</li>
-<li>We are interested in the \(\tau\)-th marginal quantile regression coefficients \(\mathbf \gamma_j = (\gamma_{j1}, \gamma_{j2}, \ldots, \gamma_{jp})^T\),
-\[
-Pr (Y_{ij} \leq \mathbf x_i^{T} \mathbf \gamma_j ) = \tau, \mbox{ for } j = 1, \ldots, J,
-\]
-where \(\mathbf x_i\) is a \(p \times 1\) vector of covariates for subject \(i\).</li>
-<li>\[
-p_k(Y) = p(Y | S = k), \quad  p_{\geq k} (Y)  = p(Y | S \geq k)
-\]
-be the densities of response \(\mathbf Y\) given follow-up time \(S=k\) and \(S \geq k\). And \(Pr_k\) be the corresponding probability given \(S = k\).</li>
-</ul>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-4" style="background:;">
-  <hgroup>
     <h2>Pattern Mixture Model</h2>
   </hgroup>
   <article data-timings="">
     <ul>
 <li>Mixture models factor the joint distribution of response and missingness as
 \[
-p (\mathbf y, \mathbf S |\mathbf x, \mathbf \omega) = p (\mathbf y|\mathbf S, \mathbf x, \mathbf \omega) p (\mathbf S | \mathbf x, \mathbf \omega).
+p (\mathbf Y, \mathbf S |\mathbf x, \mathbf \omega) = p (\mathbf Y|\mathbf S, \mathbf x, \mathbf \omega) p (\mathbf S | \mathbf x, \mathbf \omega).
 \]</li>
 <li>The full-data response distribution is given by
 \[
-p (\mathbf y | \mathbf x, \mathbf \omega) = \sum_{S \in \mathcal{S}} p(\mathbf y| \mathbf S, \mathbf x, \mathbf \theta) p (\mathbf S | \mathbf x, \mathbf \phi),
+p (\mathbf Y | \mathbf x, \mathbf \omega) = \sum_{S \in \mathcal{S}} p(\mathbf Y| \mathbf S, \mathbf x, \mathbf \theta) p (\mathbf S | \mathbf x, \mathbf \phi),
 \]
-where \(\mathcal{S}\) is the sample space for dropout time \(S\) and the parameter vector \(\mathbf \omega\) is partitioned as \((\mathbf \theta, \mathbf \phi)\).</li>
-<li><p>Furthermore, the conditional distribution of response within patterns can be decomposed as
+where \(\mathcal{S}\) is the sample space for follow-upch time \(S\) and the parameter vector \(\mathbf \omega\) is partitioned as \((\mathbf \theta, \mathbf \phi)\).</li>
+<li><p>The conditional distribution of response within patterns can be decomposed as
 \[
 P (Y_{obs}, Y_{mis} | \mathbf S, \mathbf \theta) = P
 (Y_{mis}|Y_{obs}, \mathbf S, \mathbf \theta_E) Pr (Y_{obs} | \mathbf S, \mathbf
@@ -135,68 +151,47 @@ P (Y_{obs}, Y_{mis} | \mathbf S, \mathbf \theta) = P
 <li><p>\(\mathbf \theta_{y, O}\) : distribution of observed responses</p></li>
 </ul>
 
-<!-- ### Sensitivity Parameters -->
-
-<!-- A reparameterization $\mathbf \xi(\mathbf \alpha) = (\mathbf \xi_S, \mathbf \xi_M)$: -->
-
-<!-- - $\mathbf \xi_S$ is a nonconstant function of $\mathbf \theta_E$, -->
-
-<!-- -  the observed-data likelihood -->
-
-<!-- $$ -->
-
-<!--       L(\mathbf \xi_S, \mathbf \xi_M | y_{obs}, \mathbf r) -->
-
-<!-- $$ -->
-
-<!-- is constant as a function of $\mathbf \xi_S$, and -->
-
-<!-- -  at a fixed value of $\mathbf \xi_S$, the observed data likelihood is a nonconstant function of $\mathbf \xi_M$, -->
-
-<!-- then $\mathbf \xi_S$ is a sensitivity parameter. -->
-
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-5" style="background:;">
+<slide class="" id="slide-4" style="background:;">
   <hgroup>
     <h2>Model Settings</h2>
   </hgroup>
   <article data-timings="">
     <ul>
-<li>Multivariate normal distributions within pattern</li>
-<li>The marginal quantile regression models as:
+<li><p>Multivariate normal distributions within each pattern
 \[
-Pr (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j ) = \tau,
-\]
-\[
-\begin{array}{l}
-  \displaystyle p_k(y_{i1}) = N (\Delta_{i1} +  \mathbf \beta_1^{(k)},
-  \sigma_1^{(k)}  ), k = 1, \ldots, J,\\
-   \displaystyle p_k(y_{ij}|\mathbf y_{ij^{-}}) =
+\begin{align}
+   Y_{i1}|S_i = k & \sim N (\Delta_{i1} +  \mathbf \beta_1^{(k)}, \sigma_1^{(k)}  ), k = 1, \ldots, J,\\
+   Y_{ij}|\mathbf Y_{ij^{-}}, S_i = k & \sim
   \begin{cases}
     \textrm{N} \big (\Delta_{ij} + \mathbf y_{ij^{-}}^T \mathbf
-    \beta_{y,j-1},
+    \beta_{Y,j-1},
     \sigma_j \big), & k \geq j ;  \\
-    \textrm{N} \big ( \chi(\mathbf x_{i}, \mathbf y_{ij^{-}}),
+    \textrm{N} \big ( \chi(\mathbf x_{i}, \mathbf Y_{ij^{-}}),
     \sigma_j \big), & k < j ;  \\
   \end{cases}, \mbox{ for } 2 \leq j \leq J,  \\
-  \displaystyle S_{ij} = k|\: \mathbf x_{i} \sim \textrm{Multinomial}(1, \mathbf \phi),
-\end{array}
-\]</li>
-<li>\(\chi(\mathbf x_{i}, \mathbf y_{ij^{-}})\) is the mean of the unobserved data distribution and allows sensitivity analysis by varying assumptions on \(\chi\); for computational reasons we assume that \(\chi\) is linear in \(y_{ij^{-}}\).</li>
-<li>For example, here we specify
+   S_{i} = k|\: \mathbf x_{i} & \sim \textrm{Multinomial}(1, \mathbf \phi).
+\end{align}
+\]</p></li>
+<li><p>The marginal quantile regression models:
+\[
+Pr (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j ) = \tau,
+\]</p></li>
+<li><p>\(\chi(\mathbf x_{i}, \mathbf y_{ij^{-}})\) is the mean of the unobserved data distribution and allows sensitivity analysis by varying assumptions on \(\chi\); for computational reasons, we assume that \(\chi\) is linear in \(y_{ij^{-}}\).</p></li>
+<li><p>Here we specify
 \[
 \chi(\mathbf x_{i}, \mathbf y_{ij^{-}}) = \Delta_{ij}  + \mathbf y_{ij^{-}}^T \mathbf \beta_{y,j-1} + h_{0}^{(k)}.
-\]</li>
+\]</p></li>
 </ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-6" style="background:;">
+<slide class="" id="slide-5" style="background:;">
   <hgroup>
     <h2>\(\Delta\)</h2>
   </hgroup>
@@ -225,7 +220,7 @@ and
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-7" style="background:;">
+<slide class="" id="slide-6" style="background:;">
   <hgroup>
     <h2>Intuition</h2>
   </hgroup>
@@ -234,17 +229,13 @@ and
 <li>Embed the marginal quantile regressions directly in the model through constraints in the likelihood of pattern mixture models</li>
 <li>The mixture model allows the marginal quantile regression coefficients to differ by quantiles. Otherwise, the quantile lines would be parallel to each other.</li>
 <li>The mixture model also allows sensitivity analysis.</li>
-<li>For identifiability of the observed data distribution, we apply the following constraints,
-\[
-\sum_{k=1}^J \beta_{1}^{(k)} = 0.
-\]</li>
 </ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-8" style="background:;">
+<slide class="" id="slide-7" style="background:;">
   <hgroup>
     <h2>Missing Data Mechanism and Sensitivity Analysis</h2>
   </hgroup>
@@ -256,19 +247,30 @@ and
 \[
 p_k(y_j|y_1, \ldots, y_{j-1}) = p_{\geq j}(y_j|y_1, \ldots, y_{j-1}).
 \]</p></li>
-<li><p>When \(2 \leq j \leq J\) and \(k < j\), \(Y_j\) is not observed, thus \(h_0^{(k)}\) can not be identified from the observed data.</p></li>
 </ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-9" style="background:;">
+<slide class="" id="slide-8" style="background:;">
   <hgroup>
     <h2>Sensitivity Analysis</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
+    <p>\[
+       Y_{ij}|\mathbf Y_{ij^{-}}, S_i = k \sim
+      \begin{cases}
+        \textrm{N} \big (\Delta_{ij} + \mathbf y_{ij^{-}}^T \mathbf
+        \beta_{Y,j-1},
+        \sigma_j \big), & k \geq j ;  \\
+        \textrm{N} \big (\Delta_{ij}  + \mathbf y_{ij^{-}}^T \mathbf \beta_{y,j-1} + h_{0}^{(k)},
+        \sigma_j \big), & k < j ;  \\
+      \end{cases}, \mbox{ for } 2 \leq j \leq J,
+\]</p>
+
+<ul>
+<li>When \(2 \leq j \leq J\) and \(k < j\), \(Y_j\) is not observed, thus \(h_0^{(k)}\) can not be identified from the observed data.</li>
 <li>\(\mathbf \xi_s = (h_0^{(k)})\) is a set of sensitivity parameters
 (Daniels &amp; Hogan 2008), where \(k =1, ..., J-1\).</li>
 <li>\(\mathbf \xi_s = \mathbf \xi_{s0} = \mathbf 0\), MAR holds.</li>
@@ -280,63 +282,7 @@ p_k(y_j|y_1, \ldots, y_{j-1}) = p_{\geq j}(y_j|y_1, \ldots, y_{j-1}).
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-10" style="background:;">
-  <hgroup>
-    <h2>Calculation of \(\Delta_{ij}\) (\(j = 1\))</h2>
-  </hgroup>
-  <article data-timings="">
-    <p>\(\Delta_{ij}\) depends on subject-specific covariates \(\mathbf x_{i}\), thus \(\Delta_{ij}\) needs to be calculated for each subject. We now illustrate how to calculate \(\Delta_{ij}\) given all the other parameters \(\mathbf \xi = (\mathbf \xi_m, \xi_s)\).</p>
-
-<p><strong>$\Delta_{i1}: $</strong> Expand equation :
-\[
-\begin{align*}
-    \tau = \sum_{k = 1}^J \phi_k \Phi \left( \frac{\mathbf x_{i1}^T
-        \mathbf \gamma_1 - \Delta_{i1} -
-        \beta_1^{(k)}}{ \sigma_1^{(k)} } \right),
-  \end{align*}
-\]
-  where \(\Phi\) is the standard normal CDF. Because the above equation   is continuous and monotone in \(\Delta_{i1}\), it can be solved by a   standard numerical root-finding method (e.g. bisection method) with   minimal difficulty.</p>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-11" style="background:;">
-  <hgroup>
-    <h2>Calculation of \(\Delta_{ij}, 2\leq j \leq J\)</h2>
-  </hgroup>
-  <article data-timings="">
-    <p>Lemma:
-\[
-\begin{array}{l}
-\displaystyle \int \Phi \left( \frac{x-b}{a} \right) d\Phi(x; \mu, \sigma)  =
-\begin{cases}
-1- \Phi \left( \frac{b-\mu}{\sigma} \big /
-\sqrt{\frac{a^2}{\sigma^2}+1} \right) & a > 0, \\
-\Phi \left( \frac{b-\mu}{\sigma} \big /
-\sqrt{\frac{a^2}{\sigma^2}+1} \right) & a < 0,
-\end{cases}
-\end{array}
-\]</p>
-
-<p>Recursively for the first multiple integral, apply lemma once to obtain:</p>
-
-<p>\[
-  \begin{align*}
-    Pr_1 (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j) & =
-    \idotsint
-    Pr_1 (Y_{ij} \leq \mathbf x_{i}^T\mathbf \gamma_j |\mathbf x_{i}, \mathbf Y_{ij^{-}})\\
-    & \quad  dF_1(Y_{i(j-1)}|\mathbf x_{i}, \mathbf Y_{i(j-1)^{-}}) \cdots d F_1 (Y_{i1} |\mathbf x_{i}), \\
-    & = \idotsint \Phi \left( \frac{Y_{i(j-2)} - b^{*}}{a^{*}}
-    \right) dF_1(Y_{i(j-2)}|\mathbf x_{i}, \mathbf Y_{i(j-2)^{-}})\cdots d F_1 (Y_{i1} | \mathbf x_{i}).
-  \end{align*}
-\]</p>
-
-  </article>
-  <!-- Presenter Notes -->
-</slide>
-
-<slide class="" id="slide-12" style="background:;">
+<slide class="" id="slide-9" style="background:;">
   <hgroup>
     <h2>MLE</h2>
   </hgroup>
@@ -353,33 +299,48 @@ L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
 \]</p>
 
 <ul>
+<li>To facilitate computation of the \(\Delta\)&#39;s and the likelihood, we propose a tricky way to obtain analytic forms for the required integrals.</li>
 <li>Use the bootstrap to construct confidence interval and make inferences.</li>
-</ul>
-
-<h2>Goodness of Fit Check</h2>
-
-<ul>
-<li>Check QQ plots of fitted residuals
-\[
-\hat{\epsilon}_{ij} =
-\begin{cases}
-(y_{ij} - \hat{\Delta}_{ij} - \hat{\beta}_1^{(k)})/\hat{\sigma}_1^{(k)},& j = 1 \\
-(y_{ij} - \hat{\Delta}_{ij} - \mathbf{y_{ij^{-}}^T
-\hat{\beta}_{y,j-1}})/\hat{\sigma}_j, & j > 1
-\end{cases}.
-\]</li>
 </ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-13" style="background:;">
+<slide class="" id="slide-10" style="background:;">
   <hgroup>
     <h2>Real Data Analysis: Tours</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
+    <table><thead>
+<tr>
+<th>Subject</th>
+<th>6 Months</th>
+<th>18 Months</th>
+<th>Age</th>
+<th>Race</th>
+<th>Baseline</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Subject 1</td>
+<td><em>\(Y_{11}\)</em></td>
+<td>\(Y_{12}\)</td>
+<td>\(x_{11}\)</td>
+<td>\(x_{12}\)</td>
+<td>\(Y_{10}\)</td>
+</tr>
+<tr>
+<td>Subject 2</td>
+<td><em>\(Y_{21}\)</em></td>
+<td>\(Y_{22}\)</td>
+<td>\(x_{21}\)</td>
+<td>\(x_{22}\)</td>
+<td>\(Y_{20}\)</td>
+</tr>
+</tbody></table>
+
+<ul>
 <li>Weights were recorded at baseline (\(Y_0\)), 6 months (\(Y_1\)) and 18 months (\(Y_2\)).</li>
 <li>We are interested in how the distributions of weights at six months and eighteen months change with covariates.</li>
 <li>The regressors of interest include <strong>AGE</strong>, <strong>RACE</strong> (black and white) and <strong>weight at baseline</strong> (\(Y_0\)).</li>
@@ -393,25 +354,31 @@ L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-14" style="background:;">
+<slide class="" id="slide-11" style="background:;">
   <hgroup>
     <h2>Results</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
-<li>For weights of participants at six months, weights of whites are generally 4kg lower than those of blacks for all quantiles, and the coefficients of race are negative and significant.</li>
-<li>Weights of participants are not affected by age since the coefficients are not significant. Differences in quantiles are reflected by the intercept.</li>
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p><img src="assets/img/tours-age-race.png" alt="engel"></p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <ul>
+<li>For weights of participants at six months, weights of whites are generally 4kg lower than those of blacks for all quantiles significantly.</li>
+<li>Weights of participants are not affected by age significantly.</li>
 <li>Coefficients of baseline weight show a strong relationship with weights after 6 months.</li>
 <li>For weights at 18 months after baseline, we have similar results.</li>
-<li>Weights at 18 months still have a strong relationship with baseline weights.</li>
 <li>However, whites do not weigh significantly less than blacks at 18 months unlike at 6 months.</li>
 </ul>
 
+</div>
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-15" style="background:;">
+<slide class="" id="slide-12" style="background:;">
   <hgroup>
     <h2>Sensitivity Analysis</h2>
   </hgroup>
@@ -425,7 +392,7 @@ we assume that
 E(Y_2 - Y_1| R=0) = 3.6 \mbox{kg},
 \]
 which corresponds to 0.3kg regain per month after finishing the initial 6-month program.</li>
-<li>Therefore, we specify  \(\chi(\mathbf x_{i}, Y_{i1})\) as
+<li>Specify  \(\chi(\mathbf x_{i}, Y_{i1})\) as
 \[
 \chi(\mathbf x_{i},  y_{i1}) = 3.6  + y_{i1},
 \]</li>
@@ -434,7 +401,7 @@ which corresponds to 0.3kg regain per month after finishing the initial 6-month 
 <h3>Results</h3>
 
 <ul>
-<li>There are not large differences for estimates for \(Y_2\) under MNAR vs MAR.</li>
+<li>There are no large differences for estimates for \(Y_2\) under MNAR vs MAR.</li>
 <li>This is partly due to the low proportion of missing data in this study.</li>
 </ul>
 
@@ -442,7 +409,7 @@ which corresponds to 0.3kg regain per month after finishing the initial 6-month 
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-16" style="background:;">
+<slide class="" id="slide-13" style="background:;">
   <hgroup>
     <h2>Summary</h2>
   </hgroup>
@@ -450,7 +417,7 @@ which corresponds to 0.3kg regain per month after finishing the initial 6-month 
     <ul>
 <li>Developed a marginal quantile regression model for data with monotone missingness.</li>
 <li>Used a pattern mixture model to jointly model the full data response and missingness.</li>
-<li>Estimate marginal quantile regression coefficients instead of conditional on random effects</li>
+<li>Estimate marginal quantile regression coefficients instead of conditional on random effects.</li>
 <li>Allows for sensitivity analysis which is essential for the analysis of missing data (NAS 2010).</li>
 <li>Allows the missingness to be non-ignorable.</li>
 <li>Recursive integration simplifies computation and can be implemented in high dimensions.</li>
@@ -459,9 +426,8 @@ which corresponds to 0.3kg regain per month after finishing the initial 6-month 
 <h2>Future Work</h2>
 
 <ul>
-<li>Sequential multivariate normal distribution for each component in the PMM might be too restrictive</li>
 <li>Simulation results showed that the mis-specification of the error term did have an impact on the extreme quantile regression inferences.</li>
-<li>Working on replacing it with a non-parametric model, for example, a Dirichlet process mixture of normals.</li>
+<li>Working on replacing it with a non-parametric model, for example, a Dirichlet process with mixture of normals.</li>
 </ul>
 
   </article>
@@ -474,98 +440,80 @@ which corresponds to 0.3kg regain per month after finishing the initial 6-month 
     <ul>
       <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=1 title='Outline'>
+        data-slide=1 title='Quantile Regression'>
          1
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Missing Data Mechanism'>
+        data-slide=2 title='Monotone Missingness'>
          2
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Notation'>
+        data-slide=3 title='Pattern Mixture Model'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Pattern Mixture Model'>
+        data-slide=4 title='Model Settings'>
          4
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title='Model Settings'>
+        data-slide=5 title='\(\Delta\)'>
          5
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=6 title='\(\Delta\)'>
+        data-slide=6 title='Intuition'>
          6
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=7 title='Intuition'>
+        data-slide=7 title='Missing Data Mechanism and Sensitivity Analysis'>
          7
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=8 title='Missing Data Mechanism and Sensitivity Analysis'>
+        data-slide=8 title='Sensitivity Analysis'>
          8
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=9 title='Sensitivity Analysis'>
+        data-slide=9 title='MLE'>
          9
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=10 title='Calculation of \(\Delta_{ij}\) (\(j = 1\))'>
+        data-slide=10 title='Real Data Analysis: Tours'>
          10
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=11 title='Calculation of \(\Delta_{ij}, 2\leq j \leq J\)'>
+        data-slide=11 title='Results'>
          11
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=12 title='MLE'>
+        data-slide=12 title='Sensitivity Analysis'>
          12
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=13 title='Real Data Analysis: Tours'>
+        data-slide=13 title='Summary'>
          13
-      </a>
-    </li>
-    <li>
-      <a href="#" target="_self" rel='tooltip' 
-        data-slide=14 title='Results'>
-         14
-      </a>
-    </li>
-    <li>
-      <a href="#" target="_self" rel='tooltip' 
-        data-slide=15 title='Sensitivity Analysis'>
-         15
-      </a>
-    </li>
-    <li>
-      <a href="#" target="_self" rel='tooltip' 
-        data-slide=16 title='Summary'>
-         16
       </a>
     </li>
   </ul>
