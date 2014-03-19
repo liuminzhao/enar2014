@@ -57,7 +57,7 @@
 
 </div>
 <div style='float:right;width:48%;'>
-  <ul>
+  <ul class = "build incremental">
 <li>Engel data on food expenditure vs household income for a sample of 235 19th century working class Belgian households.</li>
 <li>More information from quantile regression
 
@@ -111,7 +111,7 @@ that is, all responses are observed through time \(j − 1\), and no responses a
 </tr>
 </tbody></table>
 
-<ul>
+<ul class = "build incremental">
 <li>Assumption: \(Y_{i1}\) is always observed.</li>
 <li>Interested: \(\tau\)-th <strong>marginal</strong> quantile regression coefficients \(\mathbf \gamma_j = (\gamma_{j1}, \gamma_{j2}, \ldots, \gamma_{jp})^T\),
 \[
@@ -131,7 +131,7 @@ p_k(Y) = p(Y | S = k), \quad  p_{\geq k} (Y)  = p(Y | S \geq k)
     <h2>Pattern Mixture Model</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
+    <ul class = "build incremental">
 <li>Mixture models factor the joint distribution of response and missingness as
 \[
 p (\mathbf Y, \mathbf S |\mathbf x, \mathbf \omega) = p (\mathbf Y|\mathbf S, \mathbf x, \mathbf \omega) p (\mathbf S | \mathbf x, \mathbf \omega).
@@ -141,14 +141,14 @@ p (\mathbf Y, \mathbf S |\mathbf x, \mathbf \omega) = p (\mathbf Y|\mathbf S, \m
 p (\mathbf Y | \mathbf x, \mathbf \omega) = \sum_{S \in \mathcal{S}} p(\mathbf Y| \mathbf S, \mathbf x, \mathbf \theta) p (\mathbf S | \mathbf x, \mathbf \phi),
 \]
 where \(\mathcal{S}\) is the sample space for follow-upch time \(S\) and the parameter vector \(\mathbf \omega\) is partitioned as \((\mathbf \theta, \mathbf \phi)\).</li>
-<li><p>The conditional distribution of response within patterns can be decomposed as
+<li>The conditional distribution of response within patterns can be decomposed as
 \[
 P (Y_{obs}, Y_{mis} | \mathbf S, \mathbf \theta) = P
 (Y_{mis}|Y_{obs}, \mathbf S, \mathbf \theta_E) Pr (Y_{obs} | \mathbf S, \mathbf
 \theta_{y, O}),
-\]</p></li>
-<li><p>\(\mathbf \theta_E\):  extrapolation distribution</p></li>
-<li><p>\(\mathbf \theta_{y, O}\) : distribution of observed responses</p></li>
+\]</li>
+<li>\(\mathbf \theta_E\):  extrapolation distribution</li>
+<li>\(\mathbf \theta_{y, O}\) : distribution of observed responses</li>
 </ul>
 
   </article>
@@ -161,7 +161,7 @@ P (Y_{obs}, Y_{mis} | \mathbf S, \mathbf \theta) = P
   </hgroup>
   <article data-timings="">
     <ul>
-<li><p>Multivariate normal distributions within each pattern
+<li>Multivariate normal distributions within each pattern
 \[
 \begin{align}
    Y_{i1}|S_i = k & \sim N (\Delta_{i1} +  \mathbf \beta_1^{(k)}, \sigma_1^{(k)}  ), k = 1, \ldots, J,\\
@@ -175,16 +175,19 @@ P (Y_{obs}, Y_{mis} | \mathbf S, \mathbf \theta) = P
   \end{cases}, \mbox{ for } 2 \leq j \leq J,  \\
    S_{i} = k|\: \mathbf x_{i} & \sim \textrm{Multinomial}(1, \mathbf \phi).
 \end{align}
-\]</p></li>
-<li><p>The marginal quantile regression models:
+\]</li>
+</ul>
+
+<ul class = "build incremental">
+<li>The marginal quantile regression models:
 \[
 Pr (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j ) = \tau,
-\]</p></li>
-<li><p>\(\chi(\mathbf x_{i}, \mathbf y_{ij^{-}})\) is the mean of the unobserved data distribution and allows sensitivity analysis by varying assumptions on \(\chi\); for computational reasons, we assume that \(\chi\) is linear in \(y_{ij^{-}}\).</p></li>
-<li><p>Here we specify
+\]</li>
+<li>\(\chi(\mathbf x_{i}, \mathbf y_{ij^{-}})\) is the mean of the unobserved data distribution and allows sensitivity analysis by varying assumptions on \(\chi\); for computational reasons, we assume that \(\chi\) is linear in \(y_{ij^{-}}\).</li>
+<li>Here we specify
 \[
 \chi(\mathbf x_{i}, \mathbf y_{ij^{-}}) = \Delta_{ij}  + \mathbf y_{ij^{-}}^T \mathbf \beta_{y,j-1} + h_{0}^{(k)}.
-\]</p></li>
+\]</li>
 </ul>
 
   </article>
@@ -225,7 +228,7 @@ and
     <h2>Intuition</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
+    <ul class = "build incremental">
 <li>Embed the marginal quantile regressions directly in the model through constraints in the likelihood of pattern mixture models</li>
 <li>The mixture model allows the marginal quantile regression coefficients to differ by quantiles. Otherwise, the quantile lines would be parallel to each other.</li>
 <li>The mixture model also allows sensitivity analysis.</li>
@@ -240,13 +243,13 @@ and
     <h2>Missing Data Mechanism and Sensitivity Analysis</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
+    <ul class = "build incremental">
 <li>Mixture models are not identified due to insufficient information provided by observed data.</li>
-<li><p>Specific forms of missingness are needed to induce constraints to identify the distributions for incomplete patterns, in particular, the extrapolation distribution</p></li>
-<li><p>In mixture models , MAR holds (Molenberghs et al. 1998; Wang &amp; Daniels, 2011) if and only if, for each \(j \geq 2\) and \(k < j\):
+<li>Specific forms of missingness are needed to induce constraints to identify the distributions for incomplete patterns, in particular, the extrapolation distribution</li>
+<li>In mixture models , MAR holds (Molenberghs et al. 1998; Wang &amp; Daniels, 2011) if and only if, for each \(j \geq 2\) and \(k < j\):
 \[
 p_k(y_j|y_1, \ldots, y_{j-1}) = p_{\geq j}(y_j|y_1, \ldots, y_{j-1}).
-\]</p></li>
+\]</li>
 </ul>
 
   </article>
@@ -269,7 +272,7 @@ p_k(y_j|y_1, \ldots, y_{j-1}) = p_{\geq j}(y_j|y_1, \ldots, y_{j-1}).
       \end{cases}, \mbox{ for } 2 \leq j \leq J,
 \]</p>
 
-<ul>
+<ul class = "build incremental">
 <li>When \(2 \leq j \leq J\) and \(k < j\), \(Y_j\) is not observed, thus \(h_0^{(k)}\) can not be identified from the observed data.</li>
 <li>\(\mathbf \xi_s = (h_0^{(k)})\) is a set of sensitivity parameters
 (Daniels &amp; Hogan 2008), where \(k =1, ..., J-1\).</li>
@@ -298,7 +301,7 @@ L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
 \end{align}
 \]</p>
 
-<ul>
+<ul class = "build incremental">
 <li>To facilitate computation of the \(\Delta\)&#39;s and the likelihood, we propose a tricky way to obtain analytic forms for the required integrals.</li>
 <li>Use the bootstrap to construct confidence interval and make inferences.</li>
 </ul>
@@ -340,7 +343,7 @@ L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
 </tr>
 </tbody></table>
 
-<ul>
+<ul class = "build incremental">
 <li>Weights were recorded at baseline (\(Y_0\)), 6 months (\(Y_1\)) and 18 months (\(Y_2\)).</li>
 <li>We are interested in how the distributions of weights at six months and eighteen months change with covariates.</li>
 <li>The regressors of interest include <strong>AGE</strong>, <strong>RACE</strong> (black and white) and <strong>weight at baseline</strong> (\(Y_0\)).</li>
@@ -365,7 +368,7 @@ L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
 
 </div>
 <div style='float:right;width:48%;'>
-  <ul>
+  <ul class = "build incremental">
 <li>For weights of participants at six months, weights of whites are generally 4kg lower than those of blacks for all quantiles significantly.</li>
 <li>Weights of participants are not affected by age significantly.</li>
 <li>Coefficients of baseline weight show a strong relationship with weights after 6 months.</li>
@@ -385,24 +388,19 @@ L_i(\mathbf \xi| \mathbf y_i, S_{i} = k) & =
   <article data-timings="">
     <p>We also did a sensitivity analysis based on an assumption of MNAR.</p>
 
-<ul>
+<ul class = "build incremental">
 <li>Based on previous studies of pattern of weight regain after lifestyle treatment (Wadden et al. 2001; Perri et al. 2008)
 we assume that
 \[
 E(Y_2 - Y_1| R=0) = 3.6 \mbox{kg},
 \]
 which corresponds to 0.3kg regain per month after finishing the initial 6-month program.</li>
-<li>Specify  \(\chi(\mathbf x_{i}, Y_{i1})\) as
+<li><p>Specify  \(\chi(\mathbf x_{i}, Y_{i1})\) as
 \[
 \chi(\mathbf x_{i},  y_{i1}) = 3.6  + y_{i1},
-\]</li>
-</ul>
-
-<h3>Results</h3>
-
-<ul>
-<li>There are no large differences for estimates for \(Y_2\) under MNAR vs MAR.</li>
-<li>This is partly due to the low proportion of missing data in this study.</li>
+\]</p></li>
+<li><p>There are no large differences for estimates for \(Y_2\) under MNAR vs MAR.</p></li>
+<li><p>This is partly due to the low proportion of missing data in this study.</p></li>
 </ul>
 
   </article>
@@ -414,7 +412,7 @@ which corresponds to 0.3kg regain per month after finishing the initial 6-month 
     <h2>Summary</h2>
   </hgroup>
   <article data-timings="">
-    <ul>
+    <ul class = "build incremental">
 <li>Developed a marginal quantile regression model for data with monotone missingness.</li>
 <li>Used a pattern mixture model to jointly model the full data response and missingness.</li>
 <li>Estimate marginal quantile regression coefficients instead of conditional on random effects.</li>
@@ -425,7 +423,7 @@ which corresponds to 0.3kg regain per month after finishing the initial 6-month 
 
 <h2>Future Work</h2>
 
-<ul>
+<ul class = "build incremental">
 <li>Simulation results showed that the mis-specification of the error term did have an impact on the extreme quantile regression inferences.</li>
 <li>Working on replacing it with a non-parametric model, for example, a Dirichlet process with mixture of normals.</li>
 </ul>
