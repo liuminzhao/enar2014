@@ -108,7 +108,7 @@ $$
 
 ## $\Delta$
 
-$\Delta_{ij}$ are subject/time specific intercepts determined by the parameters in the model and
+$\Delta_{ij}$ are subject/time specific intercepts determined by the parameters in the model
 and are determined by the marginal quantile regressions,
 $$
   \tau = Pr (Y_{ij} \leq \mathbf x_{i}^T \mathbf \gamma_j ) = \sum_{k=1}^J
